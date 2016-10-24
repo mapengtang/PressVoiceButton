@@ -47,6 +47,7 @@ public class TestVoiceActivity extends BasePermissionActivity implements AudioRe
 
     @Override
     public void vibrator() {
+        //录制剩10s时振动提醒
         Vibrator vibator = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
         vibator.vibrate(300);
     }
