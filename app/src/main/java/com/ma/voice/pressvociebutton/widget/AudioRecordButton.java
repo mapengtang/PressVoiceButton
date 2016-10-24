@@ -26,7 +26,7 @@ public class AudioRecordButton extends Button implements AudioManager.AudioStage
 
     private static final int DISTANCE_Y_CANCEL = 50;
 
-    private static final int TIME_SPAN = 1000;
+    private static final int TIME_SPAN = 100;
 
     private int mCurrentState = STATE_NORMAL;
     // 已经开始录音
@@ -36,7 +36,7 @@ public class AudioRecordButton extends Button implements AudioManager.AudioStage
 
     private AudioManager mAudioManager;
 
-    private int mTime = 0;
+    private float mTime = 0f;
     // 是否触发了onlongclick，准备好了
     private boolean mReady;
 
@@ -110,7 +110,7 @@ public class AudioRecordButton extends Button implements AudioManager.AudioStage
     private Runnable mGetVoiceLevelRunnable = new Runnable() {
         @Override
         public void run() {
-            mTime += 1;
+            mTime += TIME_SPAN / 1000f;
             mhandler.sendEmptyMessage(MSG_VOICE_CHANGE);
             mhandler.postDelayed(this, TIME_SPAN);
         }
@@ -133,19 +133,20 @@ public class AudioRecordButton extends Button implements AudioManager.AudioStage
                     // 需要开启一个线程来变换音量
                     break;
                 case MSG_VOICE_CHANGE:
-                    if (mTime >= 60 && mListener != null) {// 并且callbackActivity，保存录音
-                        mListener.onFinished(mTime, mAudioManager.getCurrentFilePath());
+                    if (mTime >= 60f && mListener != null) {// 并且callbackActivity，保存录音
+                        mListener.onFinished((int) mTime, mAudioManager.getCurrentFilePath());
                         mDialogManager.dimissDialog();
                         mAudioManager.release();// release释放一个mediarecorder
                         reset();
                     }
                     mDialogManager.updateVoiceLevel(mAudioManager.getVoiceLevel(6));
-                    if (60 - mTime <= 10) {
+                    if (60f - mTime <= 10f) {
                         if (mListener != null && isVibrate) {
                             isVibrate = false;
                             mListener.vibrator();
                         }
-                        mDialogManager.showLeftTime(60 - mTime);
+                        int leftTime = (int)(60f - mTime);
+                        mDialogManager.showLeftTime(leftTime);
                     }
                     break;
                 case MSG_DIALOG_DIMISS:
@@ -215,7 +216,7 @@ public class AudioRecordButton extends Button implements AudioManager.AudioStage
                     mDialogManager.dimissDialog();
                     mAudioManager.release();// release释放一个mediarecorder
                     if (mListener != null) {// 并且callbackActivity，保存录音
-                        mListener.onFinished(mTime, mAudioManager.getCurrentFilePath());
+                        mListener.onFinished((int) mTime, mAudioManager.getCurrentFilePath());
                     }
                 } else if (mCurrentState == STATE_WANT_TO_CANCEL) {
                     // cancel
