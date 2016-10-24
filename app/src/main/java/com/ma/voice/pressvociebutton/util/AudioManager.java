@@ -150,6 +150,8 @@ public class AudioManager {
             }
         } catch (IllegalStateException e) {
             e.printStackTrace();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
         } finally {
             mRecorder = null;
         }

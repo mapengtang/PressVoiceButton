@@ -42,7 +42,7 @@ public class TestVoiceActivity extends BasePermissionActivity implements AudioRe
 
     @Override
     public void onFinished(int seconds, String filePath) {
-        mShowVoicePath.setText("文件路径:" + filePath);
+        mShowVoicePath.setText("录音文件时长为 : " + seconds + "秒; 文件路径 : " + filePath);
     }
 
     @Override
